@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight, Bath, BedDouble, Box } from 'lucide-react';
 import { useState } from 'react';
 
 export default function PropertyCard({ property, isSaved: initialSaved = false }) {
@@ -7,7 +7,14 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
     const [saving, setSaving] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const images = property.images?.length > 0 ? property.images : (property.primary_image ? [property.primary_image] : [{ image_path: '/images/hero.png' }]);
+    const getImages = () => {
+        if (property.images && property.images.length > 0) return property.images;
+        if (property.primaryImage) return [property.primaryImage];
+        if (property.primary_image) return [property.primary_image];
+        return [{ image_path: '/images/hero.png' }];
+    };
+
+    const images = getImages();
 
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -15,29 +22,23 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
         maximumFractionDigits: 0,
     });
 
-    const toggleSave = async (e) => {
+    const toggleSave = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (saving) return;
+        
+        // Optimistic UI update
+        setSaved(!saved);
         setSaving(true);
-        try {
-            const res = await fetch(`/properties/${property.id}/save`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                    'Accept': 'application/json',
-                },
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setSaved(data.saved);
-            } else if (res.status === 401) {
-                // Not logged in — redirect to login
-                router.visit('/login');
+
+        router.post(`/properties/${property.id}/save`, {}, {
+            preserveScroll: true,
+            preserveState: true,
+            onFinish: () => setSaving(false),
+            onError: () => {
+                // Revert on error
+                setSaved(saved);
             }
-        } finally {
-            setSaving(false);
-        }
+        });
     };
 
     const nextImage = (e) => {
@@ -58,10 +59,11 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
             className="group block transition-all duration-500"
         >
             {/* Image Container */}
-            <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-gray-100 mb-6 group/carousel">
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 mb-4 group/carousel">
                 <img
-                    src={images[currentIndex].image_path}
+                    src={images[currentIndex]?.image_path || '/images/hero.png'}
                     alt={property.title}
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/hero.png'; }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
 
@@ -89,9 +91,14 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
                     </>
                 )}
 
-                {/* Status Badge */}
-                <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md border border-white/30 text-xs font-medium px-4 py-2 rounded-full uppercase tracking-widest text-white shadow-sm">
-                    {property.status}
+                {/* Top Right Badges */}
+                <div className="absolute top-4 right-4 flex gap-2">
+                    <div className="bg-white/95 text-gray-800 text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-sm capitalize">
+                        {property.property_type || 'Villa'}
+                    </div>
+                    <div className="bg-white/95 text-gray-800 text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-sm capitalize">
+                        {property.status || 'For Sale'}
+                    </div>
                 </div>
 
                 {/* Favorite Heart Button */}
@@ -99,39 +106,46 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
                     onClick={toggleSave}
                     disabled={saving}
                     aria-label={saved ? 'Remove from favorites' : 'Save to favorites'}
-                    className={`absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center
+                    className={`absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center
                         backdrop-blur-md border border-white/30 transition-all duration-200
                         ${saved
                             ? 'bg-red-500/90 text-white'
-                            : 'bg-white/20 text-white hover:bg-white/40'
+                            : 'bg-black/30 text-white hover:bg-black/50'
                         }
                         ${saving ? 'scale-90 opacity-70' : 'hover:scale-110'}
                     `}
                 >
-                    <Heart className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} />
+                    <Heart className={`w-3.5 h-3.5 ${saved ? 'fill-current' : ''}`} />
                 </button>
             </div>
 
             {/* Text Content */}
-            <div className="px-1 mt-4">
-                <h3 className="text-xl md:text-2xl font-medium text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1 mb-1">
-                    {property.title}
-                </h3>
+            <div className="px-1 mt-3">
+                <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1">
+                        {property.title}
+                    </h3>
+                    <div className="text-lg font-bold text-gray-900 ml-4 shrink-0">
+                        {formatter.format(property.price)}{property.status?.toLowerCase().includes('rent') && <span className="text-xs font-normal text-gray-500"> / month</span>}
+                    </div>
+                </div>
 
-                <p className="text-gray-500 text-sm mb-4 line-clamp-1 font-light">
-                    {property.city}, {property.state}
+                <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
+                    {property.description || `Experience the perfect blend of elegance and comfort in our ${property.title.toLowerCase()}.`}
                 </p>
 
-                <div className="flex items-end justify-between pt-4 border-t border-gray-100">
-                    <div className="text-lg font-medium text-gray-900">
-                        {formatter.format(property.price)}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4 text-gray-500 text-sm">
+                    <div className="flex items-center gap-1.5">
+                        <Bath className="w-4 h-4" />
+                        <span>{property.bathrooms} {property.bathrooms === 1 ? 'Bathroom' : 'Bathrooms'}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-500 text-xs tracking-wider uppercase">
-                        <span>{property.bedrooms} BD</span>
-                        <span className="text-gray-300">|</span>
-                        <span>{property.bathrooms} BA</span>
-                        <span className="text-gray-300">|</span>
-                        <span>{property.sqft} SQFT</span>
+                    <div className="flex items-center gap-1.5">
+                        <BedDouble className="w-4 h-4" />
+                        <span>{property.bedrooms} {property.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Box className="w-4 h-4" />
+                        <span>{property.sqft?.toLocaleString() || property.sqft} sq ft</span>
                     </div>
                 </div>
             </div>
@@ -142,11 +156,20 @@ export default function PropertyCard({ property, isSaved: initialSaved = false }
 export function PropertyCardSkeleton() {
     return (
         <div className="animate-pulse block">
-            <div className="aspect-[3/4] rounded-[2rem] bg-gray-200 mb-6"></div>
-            <div className="px-1 mt-4">
-                <div className="h-4 bg-gray-200 rounded-full w-2/3 mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded-full w-1/2 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded-full w-full"></div>
+            <div className="aspect-[4/3] rounded-xl bg-gray-200 mb-4"></div>
+            <div className="px-1 mt-3">
+                <div className="flex justify-between items-start mb-2">
+                    <div className="h-5 bg-gray-200 rounded-full w-1/2"></div>
+                    <div className="h-5 bg-gray-200 rounded-full w-1/4"></div>
+                </div>
+                <div className="h-4 bg-gray-200 rounded-full w-full mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded-full w-3/4 mb-4"></div>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
+                    <div className="h-4 bg-gray-200 rounded-full w-1/4"></div>
+                    <div className="h-4 bg-gray-200 rounded-full w-1/4"></div>
+                    <div className="h-4 bg-gray-200 rounded-full w-1/4"></div>
+                </div>
             </div>
         </div>
     );

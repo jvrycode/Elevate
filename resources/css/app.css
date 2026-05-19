@@ -23,6 +23,29 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Hide native scrollbar since we have a custom dot scrollbar */
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Re-enable for generic scrollable containers if needed */
+.overflow-y-auto::-webkit-scrollbar, 
+.overflow-x-auto::-webkit-scrollbar {
+  display: block;
+  width: 4px;
+  height: 4px;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb, 
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #e4e4e7;
+  border-radius: 9999px;
+}
+
 /* Custom utilities */
 @layer utilities {
   .text-balance {

@@ -21,7 +21,7 @@ class AgentFactory extends Factory
             'user_id' => User::factory()->state(['role' => 'agent']),
             'license_number' => $this->faker->unique()->numerify('LIC-########'),
             'phone' => $this->faker->phoneNumber(),
-            'bio' => $this->faker->paragraph(3),
+            'bio' => $this->faker->realText(200),
             'agency_name' => $this->faker->company() . ' Real Estate',
         ];
     }

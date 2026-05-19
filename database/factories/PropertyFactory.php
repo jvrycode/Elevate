@@ -51,6 +51,8 @@ class PropertyFactory extends Factory
             'city' => $this->faker->city(),
             'state' => $this->faker->stateAbbr(),
             'zip' => $this->faker->postcode(),
+            'latitude' => $this->faker->latitude(40.5, 40.9),
+            'longitude' => $this->faker->longitude(-74.3, -73.7),
             'bedrooms' => $this->faker->numberBetween(2, 7),
             'bathrooms' => $this->faker->numberBetween(2, 6),
             'sqft' => $this->faker->numberBetween(1500, 10000),

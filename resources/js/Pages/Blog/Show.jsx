@@ -21,9 +21,7 @@ export default function BlogShow({ post, related }) {
     return (
         <div className="min-h-screen bg-white">
             <Head title={`${post.title} | Elevate Blog`} />
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20"><Navbar /></div>
-            </div>
+            <Navbar />
 
             <main>
                 {/* Hero */}

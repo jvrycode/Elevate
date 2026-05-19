@@ -1,77 +1,87 @@
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
+import { ArrowRight, MapPin } from 'lucide-react';
 
 export default function Hero({ featuredProperties = [] }) {
+    const featured = featuredProperties.length > 0 ? featuredProperties[0] : null;
+    
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+    });
+
     return (
-        <div className="relative pt-32 pb-16 w-full flex flex-col items-center bg-white px-4 md:px-8">
-            <div className="max-w-7xl w-full">
-                {/* Top Text Section */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
-                    <motion.h1 
-                        className="text-5xl md:text-7xl text-gray-900 leading-tight font-medium max-w-2xl"
-                        initial={{ y: 30, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                    >
-                        Let's bring your dream building to life!
-                    </motion.h1>
-                    
+        <div className="relative h-[90vh] min-h-[600px] w-full flex flex-col justify-center items-center bg-black px-4 md:px-8 overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0 w-full h-full">
+                <img 
+                    src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2000&auto=format&fit=crop" 
+                    alt="Elevate Luxury Real Estate" 
+                    className="w-full h-full object-cover opacity-50"
+                />
+                {/* Gradient Overlay for better contrast and cinematic fade */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"></div>
+            </div>
+
+            <div className="max-w-7xl w-full h-full relative z-10 flex flex-col justify-between pt-32 pb-12">
+                {/* Main Hero Text */}
+                <div className="flex-1 flex flex-col justify-center">
                     <motion.p 
-                        className="text-gray-600 max-w-sm text-sm md:text-base leading-relaxed text-right md:text-left"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                        className="text-white/70 uppercase tracking-[0.3em] text-sm md:text-base font-medium mb-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
                     >
-                        Our skilled team offers tailored solutions for all your
-                        real estate needs. Get the support you require today!
+                        Welcome to the extraordinary
                     </motion.p>
+                    <motion.h1
+                        className="text-[12vw] md:text-[8vw] leading-[0.9] font-black text-white uppercase tracking-tighter"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        Elevate
+                    </motion.h1>
                 </div>
 
-                {/* Bottom Image Section */}
-                <motion.div 
-                    className="relative w-full aspect-[21/9] rounded-[2rem] overflow-hidden shadow-2xl bg-gray-100"
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
-                >
-                    <img 
-                        src="/images/hero.png" 
-                        alt="Modern Architecture" 
-                        className="w-full h-full object-cover object-center"
-                    />
-
-                    {/* Glassmorphism Carousel overlay (Dynamic) */}
-                    {featuredProperties.length > 0 && (
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 p-3 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 hidden sm:flex">
-                            {featuredProperties.map((property, index) => {
-                                const imageUrl = property.primary_image ? property.primary_image.image_path : '/images/thumb1.png';
-                                const isActive = index === 1; // Highlight the second one as an example
-                                
-                                return (
-                                    <Link key={property.id} href={`/properties/${property.slug}`}>
-                                        <div className={`w-24 h-16 rounded-xl overflow-hidden shadow-sm transition-all cursor-pointer relative group ${isActive ? 'border-2 border-white' : 'opacity-60 hover:opacity-100'}`}>
-                                            <img src={imageUrl} className="w-full h-full object-cover" alt={property.title} />
-                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <span className="text-white text-[10px] font-medium text-center px-1 truncate w-full">{property.title}</span>
-                                            </div>
-                                            {isActive && (
-                                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center pointer-events-none">
-                                                    <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs text-gray-900">▶</div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </Link>
-                                );
-                            })}
-                            
-                            <Link href="/properties">
-                                <div className="w-24 h-16 rounded-xl overflow-hidden shadow-sm opacity-80 hover:opacity-100 transition-opacity cursor-pointer flex items-center justify-center bg-gray-900/80 backdrop-blur-sm">
-                                    <span className="text-white text-xs font-medium">View All</span>
+                {/* Featured Property Glass Card */}
+                {featured && (
+                    <motion.div 
+                        className="w-full max-w-lg self-end mt-8"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <Link 
+                            href={`/properties/${featured.slug}`}
+                            className="block backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-6 hover:bg-white/20 transition-all duration-500 group"
+                        >
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="bg-white/90 text-gray-900 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                                    Featured Residence
                                 </div>
-                            </Link>
-                        </div>
-                    )}
-                </motion.div>
+                                <div className="text-white font-medium flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                                    Explore <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                            
+                            <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 line-clamp-1">
+                                {featured.title}
+                            </h3>
+                            
+                            <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+                                <div className="flex items-center gap-2 text-white/80 text-sm">
+                                    <MapPin className="w-4 h-4" />
+                                    {featured.location || 'Exclusive Location'}
+                                </div>
+                                <div className="text-xl font-medium text-white">
+                                    {formatter.format(featured.price)}
+                                </div>
+                            </div>
+                        </Link>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

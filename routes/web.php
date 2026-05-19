@@ -41,9 +41,9 @@ Route::post('/properties/{property}/inquire', [InquiryController::class, 'store'
 Route::get('/agents', [AgentController::class, 'index'])->name('agents.index');
 Route::get('/agents/{agent}', [AgentController::class, 'show'])->name('agents.show');
 
-// Blog
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+// Blog (Resources page removed per user request)
+// Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+// Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // --- Authentication Routes ---
 Route::middleware('guest')->group(function () {

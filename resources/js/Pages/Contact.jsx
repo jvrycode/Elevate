@@ -6,13 +6,7 @@ export default function Contact() {
     return (
         <div className="min-h-screen bg-white">
             <Head title="Contact Us" />
-            
-            {/* Navbar Area */}
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20">
-                    <Navbar />
-                </div>
-            </div>
+            <Navbar />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
@@ -56,7 +50,6 @@ export default function Contact() {
                                 <input 
                                     type="text" 
                                     className="w-full bg-transparent border-b border-gray-300 px-0 py-3 text-gray-900 focus:outline-none focus:border-gray-900 focus:ring-0 transition-colors"
-                                    placeholder="Jane Doe"
                                 />
                             </div>
                             
@@ -65,7 +58,6 @@ export default function Contact() {
                                 <input 
                                     type="email" 
                                     className="w-full bg-transparent border-b border-gray-300 px-0 py-3 text-gray-900 focus:outline-none focus:border-gray-900 focus:ring-0 transition-colors"
-                                    placeholder="jane@example.com"
                                 />
                             </div>
 

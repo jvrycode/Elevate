@@ -14,12 +14,10 @@ class SavedListingController extends Controller
 
         if ($user->savedListings()->where('property_id', $property->id)->exists()) {
             $user->savedListings()->detach($property->id);
-            $saved = false;
         } else {
             $user->savedListings()->attach($property->id);
-            $saved = true;
         }
 
-        return response()->json(['saved' => $saved]);
+        return back();
     }
 }

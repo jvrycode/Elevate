@@ -33,6 +33,13 @@ class PropertyController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('bounds_s') && $request->filled('bounds_n')) {
+            $query->whereBetween('latitude', [$request->bounds_s, $request->bounds_n]);
+        }
+        if ($request->filled('bounds_w') && $request->filled('bounds_e')) {
+            $query->whereBetween('longitude', [$request->bounds_w, $request->bounds_e]);
+        }
+
         $properties = $query->latest()->paginate(12)->withQueryString();
 
         // Pass the authenticated user's saved listing IDs for heart toggle state
@@ -42,7 +49,7 @@ class PropertyController extends Controller
 
         return Inertia::render('Properties/Index', [
             'properties' => $properties,
-            'filters'    => $request->only(['min_price', 'max_price', 'beds', 'property_type', 'city', 'status']),
+            'filters'    => $request->only(['min_price', 'max_price', 'beds', 'property_type', 'city', 'status', 'bounds_n', 'bounds_s', 'bounds_e', 'bounds_w']),
             'savedIds'   => $savedIds,
         ]);
     }

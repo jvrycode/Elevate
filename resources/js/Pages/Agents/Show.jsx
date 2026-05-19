@@ -48,14 +48,12 @@ export default function AgentShow({ agent, activeListings, soldListings }) {
     return (
         <div className="min-h-screen bg-white">
             <Head title={`${agent.user?.name} | Elevate Agent`} />
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20"><Navbar /></div>
-            </div>
+            <Navbar />
 
             <main>
                 {/* Hero Section */}
                 <div className="bg-gray-50 border-b border-gray-100">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
                         <motion.div className="flex flex-col md:flex-row items-start md:items-center gap-8"
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                             {/* Avatar */}

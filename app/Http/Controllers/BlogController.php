@@ -7,15 +7,21 @@ use Inertia\Inertia;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $posts = BlogPost::published()
+        $query = BlogPost::published()
             ->with('author')
-            ->latest('published_at')
-            ->paginate(9);
+            ->latest('published_at');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $posts = $query->paginate(9)->withQueryString();
 
         return Inertia::render('Blog/Index', [
             'posts' => $posts,
+            'filters' => $request->only(['category']),
         ]);
     }
 

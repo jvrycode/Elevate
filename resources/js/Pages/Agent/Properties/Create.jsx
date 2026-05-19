@@ -32,9 +32,7 @@ export default function Create() {
     return (
         <div className="min-h-screen bg-gray-50">
             <Head title="Create Listing" />
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20"><Navbar /></div>
-            </div>
+            <Navbar />
 
             <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8">

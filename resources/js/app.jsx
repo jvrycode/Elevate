@@ -30,9 +30,9 @@ function AppWrapper({ children }) {
             <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                     key={url.split('?')[0]} // Base URL so query params (like filtering) don't trigger transitions
-                    initial={{ opacity: 0, filter: 'blur(4px)' }}
-                    animate={{ opacity: 1, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, filter: 'blur(4px)' }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                 >
                     {children}

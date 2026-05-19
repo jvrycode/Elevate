@@ -208,16 +208,14 @@ export default function Show({ property, isSaved: initialSaved, myAppointment })
                 {tourModalOpen && <TourModal property={property} onClose={() => setTourModalOpen(false)} />}
             </AnimatePresence>
 
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20"><Navbar /></div>
-            </div>
+            <Navbar />
 
             <main>
                 {/* Image Gallery */}
-                <div className={`w-full h-[60vh] grid gap-2 bg-gray-100 p-2 ${
+                <div className={`w-full h-[60vh] grid gap-2 bg-gray-100 p-2 overflow-hidden ${
                     galleryImages.length > 0 ? 'grid-cols-4' : 'grid-cols-1'
                 }`}>
-                    <div className={`h-full overflow-hidden relative cursor-pointer ${
+                    <div className={`h-full min-h-0 overflow-hidden relative cursor-pointer ${
                         galleryImages.length > 0 ? 'col-span-4 md:col-span-2 rounded-l-2xl' : 'col-span-1 rounded-2xl'
                     }`}
                         onClick={() => setActiveImg(null)}>
@@ -225,20 +223,10 @@ export default function Show({ property, isSaved: initialSaved, myAppointment })
                         <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-4 py-2 rounded-full font-medium text-gray-900 uppercase tracking-wider text-sm shadow-sm">
                             {property.status}
                         </div>
-                        {/* Save heart on main image */}
-                        <button
-                            onClick={(e) => { e.stopPropagation(); toggleSave(); }}
-                            className={`absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 transition-all
-                                ${saved ? 'bg-red-500/90 text-white' : 'bg-white/20 text-white hover:bg-white/40'}
-                                ${saving ? 'scale-90 opacity-70' : 'hover:scale-110'}
-                            `}
-                        >
-                            <Heart className={`w-5 h-5 ${saved ? 'fill-current' : ''}`} />
-                        </button>
                     </div>
                     {/* Right gallery - only render if we have extra images */}
                     {galleryImages.length > 0 && (
-                        <div className={`hidden md:grid col-span-2 gap-2 h-full ${
+                        <div className={`hidden md:grid col-span-2 gap-2 h-full min-h-0 ${
                             galleryImages.length === 1 ? 'grid-rows-1 grid-cols-1' :
                             galleryImages.length === 2 ? 'grid-rows-2 grid-cols-1' :
                             'grid-rows-2 grid-cols-2'
@@ -261,10 +249,10 @@ export default function Show({ property, isSaved: initialSaved, myAppointment })
 
                 {/* Content */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 xl:gap-16">
 
                         {/* Left Column */}
-                        <div className="lg:col-span-2">
+                        <div className="xl:col-span-2">
                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                                 <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-4 leading-tight">{property.title}</h1>
 
@@ -333,7 +321,7 @@ export default function Show({ property, isSaved: initialSaved, myAppointment })
                         </div>
 
                         {/* Right Column */}
-                        <div className="lg:col-span-1">
+                        <div className="xl:col-span-1">
                             <motion.div
                                 className="bg-gray-50 rounded-3xl p-8 sticky top-28 border border-gray-100 shadow-sm space-y-6"
                                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}

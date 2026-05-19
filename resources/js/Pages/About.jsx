@@ -6,13 +6,7 @@ export default function About() {
     return (
         <div className="min-h-screen bg-white">
             <Head title="About Us" />
-            
-            {/* Navbar Area */}
-            <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
-                <div className="relative h-20">
-                    <Navbar />
-                </div>
-            </div>
+            <Navbar />
 
             <main className="pt-24 pb-32">
                 {/* Manifesto Section */}
@@ -43,40 +37,40 @@ export default function About() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {/* Agent 1 */}
+                        {/* Executive 1 */}
                         <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
                             <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop" alt="James Sterling" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Arthur Vance" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">James Sterling</h4>
-                            <p className="text-sm text-gray-500 font-light">Founder & Principal</p>
+                            <h4 className="text-lg font-medium text-gray-900">Arthur Vance</h4>
+                            <p className="text-sm text-gray-500 font-light">Chief Executive Officer</p>
                         </motion.div>
                         
-                        {/* Agent 2 */}
+                        {/* Executive 2 */}
                         <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
                             <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Elena Rostova" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop" alt="Clara Hayes" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">Elena Rostova</h4>
-                            <p className="text-sm text-gray-500 font-light">Head of Acquisitions</p>
+                            <h4 className="text-lg font-medium text-gray-900">Clara Hayes</h4>
+                            <p className="text-sm text-gray-500 font-light">Chief Operating Officer</p>
                         </motion.div>
 
-                        {/* Agent 3 */}
+                        {/* Executive 3 */}
                         <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
                             <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop" alt="Michael Chen" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop" alt="Julian Thorne" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">Michael Chen</h4>
-                            <p className="text-sm text-gray-500 font-light">Luxury Specialist</p>
+                            <h4 className="text-lg font-medium text-gray-900">Julian Thorne</h4>
+                            <p className="text-sm text-gray-500 font-light">Chief Architect</p>
                         </motion.div>
 
-                        {/* Agent 4 */}
+                        {/* Executive 4 */}
                         <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.4 }}>
                             <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop" alt="Sarah Jenkins" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop" alt="Isabella Rossi" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">Sarah Jenkins</h4>
-                            <p className="text-sm text-gray-500 font-light">Client Relations</p>
+                            <h4 className="text-lg font-medium text-gray-900">Isabella Rossi</h4>
+                            <p className="text-sm text-gray-500 font-light">Head of Global Strategy</p>
                         </motion.div>
                     </div>
                 </section>

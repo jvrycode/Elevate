@@ -4,12 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, LayoutDashboard, Heart, Settings, ChevronDown } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 
-export default function Navbar() {
+export default function Navbar({ forceDark = false }) {
     const { url, props } = usePage();
     const isHome = url === '/';
     const user = props.auth?.user;
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -21,95 +30,106 @@ export default function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const isDarkBackground = (isHome || forceDark) && !scrolled;
+    const textColor = isDarkBackground ? 'text-white' : 'text-gray-900';
+    const linkColor = isDarkBackground ? 'text-gray-200 hover:text-white' : 'text-gray-600 hover:text-gray-900';
+
     return (
-        <nav className={`absolute top-0 w-full z-50 px-8 py-6 ${isHome ? 'bg-transparent' : 'bg-white/80 backdrop-blur-md border-b border-gray-100'}`}>
-            <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className={`fixed w-full z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex justify-center ${scrolled ? 'top-4 md:top-6 px-4' : 'top-0 px-4 md:px-8'}`}>
+            <nav className={`w-full max-w-7xl flex justify-between items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border rounded-full ${
+                scrolled 
+                    ? 'bg-white/90 backdrop-blur-md border-gray-200/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] px-6 md:px-8 py-3' 
+                    : 'bg-transparent border-transparent shadow-none py-5 md:py-6 px-4 md:px-6'
+            }`}>
                 {/* Logo */}
-                <Link href="/" className="flex items-center">
-                    <img src="/ElevateBlue.png" alt="Elevate" className="h-24 w-auto object-contain scale-125 origin-left" />
-                </Link>
-                
+                <div className="flex-1 flex justify-start">
+                    <Link href="/" className="flex items-center">
+                        <span className={`text-xs md:text-sm font-bold tracking-[0.2em] uppercase transition-colors ${textColor}`}>
+                            Elevate
+                        </span>
+                    </Link>
+                </div>
+
                 {/* Center Links */}
-                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-                    <Link href="/properties" className={`${url.startsWith('/properties') ? 'text-gray-900' : 'hover:text-gray-900'} transition-colors`}>Residences</Link>
-                    <Link href="/agents" className={`${url.startsWith('/agents') ? 'text-gray-900' : 'hover:text-gray-900'} transition-colors`}>Agents</Link>
-                    <Link href="/blog" className={`${url.startsWith('/blog') ? 'text-gray-900' : 'hover:text-gray-900'} transition-colors`}>Resources</Link>
-                    <Link href="/about" className={`${url === '/about' ? 'text-gray-900' : 'hover:text-gray-900'} transition-colors`}>About</Link>
-                    <Link href="/contact" className={`${url === '/contact' ? 'text-gray-900' : 'hover:text-gray-900'} transition-colors`}>Contact</Link>
+                <div className="hidden md:flex flex-1 justify-center items-center gap-8 text-sm font-medium">
+                    <Link href="/properties" className={`transition-colors ${url.startsWith('/properties') ? textColor : linkColor}`}>Residences</Link>
+                    <Link href="/agents" className={`transition-colors ${url.startsWith('/agents') ? textColor : linkColor}`}>Agents</Link>
+                    <Link href="/about" className={`transition-colors ${url === '/about' ? textColor : linkColor}`}>About</Link>
+                    <Link href="/contact" className={`transition-colors ${url === '/contact' ? textColor : linkColor}`}>Contact</Link>
                 </div>
 
                 {/* Right Action (Profile Pill & Notifications) */}
-                <div className="flex items-center">
+                <div className="flex-1 flex justify-end items-center">
                     {user ? (
                         <div className="flex items-center">
                             <NotificationBell />
                             <div className="relative" ref={dropdownRef}>
-                            <motion.button 
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="flex items-center bg-white border border-gray-200 text-gray-900 rounded-full p-1.5 shadow-sm pr-4 hover:shadow-md transition-all gap-3"
-                            >
-                                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-900 text-white flex items-center justify-center text-xs font-semibold">
-                                    {user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div className="flex flex-col text-left leading-tight hidden sm:flex">
-                                    <span className="text-xs font-semibold text-gray-900">{user.name}</span>
-                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">{user.role || 'Member'}</span>
-                                </div>
-                                <motion.div animate={{ rotate: dropdownOpen ? 180 : 0 }} className="text-gray-400">
-                                    <ChevronDown className="w-4 h-4" />
-                                </motion.div>
-                            </motion.button>
-
-                            <AnimatePresence>
-                                {dropdownOpen && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                                        className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 origin-top-right"
-                                    >
-                                        <div className="p-4 bg-gray-50/80 border-b border-gray-100">
-                                            <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-                                            <p className="text-xs text-gray-500 truncate mt-0.5">{user.email}</p>
-                                        </div>
-                                        <div className="p-2 space-y-1">
-                                            <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                                                <LayoutDashboard className="w-4 h-4 text-gray-400" /> Dashboard
-                                            </Link>
-                                            {user.role === 'client' && (
-                                                <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                                                    <Heart className="w-4 h-4 text-gray-400" /> Saved Properties
-                                                </Link>
-                                            )}
-                                            <Link href="/settings" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                                                <Settings className="w-4 h-4 text-gray-400" /> Settings
-                                            </Link>
-                                        </div>
-                                        <div className="p-2 border-t border-gray-100">
-                                            <Link href="/logout" method="post" as="button" onClick={() => setDropdownOpen(false)} className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 transition-colors">
-                                                <LogOut className="w-4 h-4" /> Sign Out
-                                            </Link>
-                                        </div>
+                                <motion.button
+                                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="flex items-center bg-white border border-gray-200 text-gray-900 rounded-full p-1.5 shadow-sm pr-4 hover:shadow-md transition-all gap-3"
+                                >
+                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-900 text-white flex items-center justify-center text-xs font-semibold">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="flex flex-col text-left leading-tight hidden sm:flex">
+                                        <span className="text-xs font-semibold text-gray-900">{user.name}</span>
+                                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">{user.role || 'Member'}</span>
+                                    </div>
+                                    <motion.div animate={{ rotate: dropdownOpen ? 180 : 0 }} className="text-gray-400">
+                                        <ChevronDown className="w-4 h-4" />
                                     </motion.div>
-                                )}
-                            </AnimatePresence>
+                                </motion.button>
+
+                                <AnimatePresence>
+                                    {dropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                                            className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 origin-top-right"
+                                        >
+                                            <div className="p-4 bg-gray-50/80 border-b border-gray-100">
+                                                <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+                                                <p className="text-xs text-gray-500 truncate mt-0.5">{user.email}</p>
+                                            </div>
+                                            <div className="p-2 space-y-1">
+                                                <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                                    <LayoutDashboard className="w-4 h-4 text-gray-400" /> Dashboard
+                                                </Link>
+                                                {user.role === 'client' && (
+                                                    <Link href="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                                        <Heart className="w-4 h-4 text-gray-400" /> Saved Properties
+                                                    </Link>
+                                                )}
+                                                <Link href="/settings" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                                    <Settings className="w-4 h-4 text-gray-400" /> Settings
+                                                </Link>
+                                            </div>
+                                            <div className="p-2 border-t border-gray-100">
+                                                <Link href="/logout" method="post" as="button" onClick={() => setDropdownOpen(false)} className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 transition-colors">
+                                                    <LogOut className="w-4 h-4" /> Sign Out
+                                                </Link>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
-                    </div>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link href="/login" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors hidden sm:block">
+                            <Link href="/login" className={`text-sm font-medium transition-colors hidden sm:block ${isDarkBackground ? 'text-white hover:text-gray-200' : 'text-gray-900 hover:text-gray-600'}`}>
                                 Sign In
                             </Link>
-                            <Link href="/register" className="bg-gray-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-gray-800 transition-colors">
+                            <Link href="/register" className={`text-sm font-medium px-6 py-2.5 rounded-full transition-colors ${isDarkBackground ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}>
                                 Get Started
                             </Link>
                         </div>
                     )}
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
     );
 }
