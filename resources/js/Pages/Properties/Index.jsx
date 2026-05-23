@@ -13,23 +13,33 @@ delete L.Icon.Default.prototype._getIconUrl;
 
 const createPriceIcon = (price, isHovered = false) => L.divIcon({
     className: '',
-    html: `<div style="
-        background: ${isHovered ? '#000000' : '#111827'};
-        color: white;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: system-ui, sans-serif;
-        white-space: nowrap;
-        box-shadow: ${isHovered ? '0 8px 16px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.25)'};
-        border: 2px solid white;
-        cursor: pointer;
-        transform: ${isHovered ? 'scale(1.15)' : 'scale(1)'};
-        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    ">$${Math.round(price / 1000)}K</div>`,
-    iconAnchor: [30, 16],
-    popupAnchor: [0, -20],
+    html: `
+        <div style="
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) ${isHovered ? 'scale(1.2) translateY(-4px)' : 'scale(1)'};
+            transform-origin: bottom center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: ${isHovered 
+                ? 'drop-shadow(0 12px 16px rgba(0,0,0,0.3)) drop-shadow(0 4px 6px rgba(0,0,0,0.1))' 
+                : 'drop-shadow(0 6px 10px rgba(0,0,0,0.15)) drop-shadow(0 2px 4px rgba(0,0,0,0.05))'};
+            z-index: ${isHovered ? 1000 : 1};
+            cursor: pointer;
+        ">
+            <svg width="34" height="44" viewBox="0 0 34 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 1.5C8.43959 1.5 1.5 8.43959 1.5 17C1.5 28.5 17 42.5 17 42.5C17 42.5 32.5 28.5 32.5 17C32.5 8.43959 25.5604 1.5 17 1.5Z" 
+                      fill="${isHovered ? '#111827' : '#ffffff'}" 
+                      stroke="${isHovered ? '#0f172a' : '#d1d5db'}" 
+                      stroke-width="1.5" 
+                      stroke-linejoin="round"/>
+                <circle cx="17" cy="17" r="6.5" fill="${isHovered ? '#ffffff' : '#111827'}"/>
+            </svg>
+        </div>
+    `,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, -44],
 });
 
 function MapBoundsController({ properties }) {
@@ -66,6 +76,7 @@ export default function Index({ properties, filters, savedIds }) {
     const [showSearchArea, setShowSearchArea] = useState(false);
     const [hoveredPropertyId, setHoveredPropertyId] = useState(null);
     const mapRef = useRef(null);
+    const carouselRef = useRef(null);
 
     useEffect(() => {
         const removeStart = router.on('start', () => setIsLoading(true));
@@ -143,117 +154,142 @@ export default function Index({ properties, filters, savedIds }) {
 
             {typeof document !== 'undefined' && createPortal(
                 <AnimatePresence>
-                {mapOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <motion.div
-                            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            onClick={() => setMapOpen(false)}
-                        />
-                        <motion.div
-                            className="relative w-full max-w-4xl bg-white shadow-2xl rounded-[2rem] overflow-hidden flex flex-col z-10"
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        >
-                            <div className="w-full h-[60vh] sm:h-[70vh] relative">
-                                <button 
-                                    onClick={() => setMapOpen(false)} 
-                                    className="absolute top-4 right-4 z-[1000] bg-white/90 hover:bg-white p-2.5 rounded-full shadow-lg transition-all"
-                                >
-                                    <X className="w-5 h-5 text-gray-700" />
-                                </button>
-                                {showSearchArea && (
+                    {mapOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <motion.div
+                                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                onClick={() => setMapOpen(false)}
+                            />
+                            <motion.div
+                                className="relative w-full max-w-4xl bg-white shadow-2xl rounded-[2rem] overflow-hidden flex flex-col z-10"
+                                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            >
+                                <div className="w-full h-[60vh] sm:h-[70vh] relative">
                                     <button
-                                        onClick={() => {
-                                            if (mapRef.current) {
-                                                const bounds = mapRef.current.getBounds();
-                                                applyFilters({
-                                                    ...localFilters,
-                                                    bounds_n: bounds.getNorth(),
-                                                    bounds_s: bounds.getSouth(),
-                                                    bounds_e: bounds.getEast(),
-                                                    bounds_w: bounds.getWest(),
-                                                });
-                                                setShowSearchArea(false);
-                                            }
-                                        }}
-                                        className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 bg-white/95 hover:bg-white text-gray-800 font-medium px-4 py-2 rounded-xl shadow-lg border border-gray-100/50 backdrop-blur-md text-xs sm:text-sm transition-all hover:scale-105"
+                                        onClick={() => setMapOpen(false)}
+                                        className="absolute top-4 right-4 z-[1000] bg-white/90 hover:bg-white p-2.5 rounded-full shadow-lg transition-all"
                                     >
-                                        <RefreshCw className="w-3.5 h-3.5" />
-                                        Search this area
+                                        <X className="w-5 h-5 text-gray-700" />
                                     </button>
-                                )}
-                                <MapContainer
-                                    center={[40.7128, -74.0060]}
-                                    zoom={11}
-                                    zoomControl={false}
-                                    attributionControl={false}
-                                    className="w-full h-full z-0"
-                                    style={{ background: '#f8f5f0' }}
-                                    ref={mapRef}
-                                >
-                                    <MapBoundsController properties={properties} />
-                                    <MapEventsHandler setShowSearchArea={setShowSearchArea} />
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://carto.com">CARTO</a>'
-                                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                                    />
-                                    {properties.data.filter(p => p.latitude && p.longitude).map(prop => (
-                                        <Marker key={prop.id} position={[prop.latitude, prop.longitude]} icon={createPriceIcon(prop.price, hoveredPropertyId === prop.id)}>
-                                            <Popup className="custom-popup" maxWidth={240} minWidth={240}>
-                                                <div className="p-0 flex flex-col group/popup">
-                                                    <Link href={`/properties/${prop.slug}`} className="block relative overflow-hidden">
-                                                        <img src={prop.images?.[0]?.image_path || '/images/hero.png'} alt={prop.title} className="w-full h-32 object-cover transition-transform duration-500 group-hover/popup:scale-105" />
-                                                        <div className="absolute top-2 right-2 bg-white/95 text-gray-800 text-[10px] font-medium px-2 py-1 rounded-full shadow-sm capitalize">
-                                                            {prop.status || 'For Sale'}
-                                                        </div>
-                                                    </Link>
-                                                    <div className="p-3">
-                                                        <Link href={`/properties/${prop.slug}`} className="block">
-                                                            <div className="text-gray-900 font-bold text-base mb-0.5">${Number(prop.price).toLocaleString()}</div>
-                                                            <div className="font-medium text-sm text-gray-800 mb-1 truncate">{prop.title}</div>
-                                                            <div className="flex items-center gap-3 text-gray-500 text-xs">
-                                                                <span>{prop.bedrooms} {prop.bedrooms === 1 ? 'Bed' : 'Beds'}</span>
-                                                                <span>{prop.bathrooms} {prop.bathrooms === 1 ? 'Bath' : 'Baths'}</span>
-                                                                <span>{prop.sqft?.toLocaleString()} sqft</span>
+                                    {showSearchArea && (
+                                        <button
+                                            onClick={() => {
+                                                if (mapRef.current) {
+                                                    const bounds = mapRef.current.getBounds();
+                                                    applyFilters({
+                                                        ...localFilters,
+                                                        bounds_n: bounds.getNorth(),
+                                                        bounds_s: bounds.getSouth(),
+                                                        bounds_e: bounds.getEast(),
+                                                        bounds_w: bounds.getWest(),
+                                                    });
+                                                    setShowSearchArea(false);
+                                                }
+                                            }}
+                                            className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 bg-white/95 hover:bg-white text-gray-800 font-medium px-4 py-2 rounded-xl shadow-lg border border-gray-100/50 backdrop-blur-md text-xs sm:text-sm transition-all hover:scale-105"
+                                        >
+                                            <RefreshCw className="w-3.5 h-3.5" />
+                                            Search this area
+                                        </button>
+                                    )}
+                                    <MapContainer
+                                        center={[40.7128, -74.0060]}
+                                        zoom={11}
+                                        zoomControl={false}
+                                        attributionControl={false}
+                                        className="w-full h-full z-0"
+                                        style={{ background: '#f8f5f0' }}
+                                        ref={mapRef}
+                                    >
+                                        <MapBoundsController properties={properties} />
+                                        <MapEventsHandler setShowSearchArea={setShowSearchArea} />
+                                        <TileLayer
+                                            attribution='&copy; <a href="https://carto.com">CARTO</a>'
+                                            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                                        />
+                                        {properties.data.filter(p => p.latitude && p.longitude).map(prop => (
+                                            <Marker key={prop.id} position={[prop.latitude, prop.longitude]} icon={createPriceIcon(prop.price, hoveredPropertyId === prop.id)}>
+                                                <Popup className="custom-popup" maxWidth={320} minWidth={320}>
+                                                    <div className="p-0 flex flex-col group/popup">
+                                                        <Link href={`/properties/${prop.slug}`} className="block relative overflow-hidden rounded-t-[14px]">
+                                                            <img src={prop.images?.[0]?.image_path || '/images/hero.png'} alt={prop.title} className="w-full h-32 object-cover transition-transform duration-700 group-hover/popup:scale-110" />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover/popup:opacity-100 transition-opacity duration-500"></div>
+                                                            <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md text-gray-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm capitalize tracking-wide">
+                                                                {prop.status || 'For Sale'}
                                                             </div>
                                                         </Link>
+                                                        <div className="p-4 bg-white rounded-b-[14px] shadow-lg border-x border-b border-gray-100">
+                                                            <Link href={`/properties/${prop.slug}`} className="block">
+                                                                <div className="text-gray-900 font-bold text-xl mb-1 tracking-tight">${Number(prop.price).toLocaleString()}</div>
+                                                                <div className="font-medium text-sm text-gray-500 mb-3 truncate">{prop.title}</div>
+                                                                <div className="flex items-center gap-3 text-gray-900 text-xs font-semibold">
+                                                                    <span>{prop.bedrooms} <span className="text-gray-400 font-normal">Beds</span></span>
+                                                                    <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                                                                    <span>{prop.bathrooms} <span className="text-gray-400 font-normal">Baths</span></span>
+                                                                    <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                                                                    <span>{prop.sqft?.toLocaleString()} <span className="text-gray-400 font-normal">sqft</span></span>
+                                                                </div>
+                                                            </Link>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </Popup>
-                                        </Marker>
-                                    ))}
-                                </MapContainer>
+                                                </Popup>
+                                            </Marker>
+                                        ))}
+                                    </MapContainer>
 
-                                {/* Bottom Carousel */}
-                                <div className="absolute bottom-4 left-0 w-full overflow-x-auto px-4 pb-2 pt-2 flex gap-4 snap-x snap-mandatory z-[1000] scrollbar-hide">
-                                    {properties.data.filter(p => p.latitude && p.longitude).map(prop => (
-                                        <div 
-                                            key={prop.id} 
-                                            className={`snap-center shrink-0 w-72 bg-white rounded-xl shadow-lg border overflow-hidden hover:ring-2 hover:ring-gray-900 transition-all cursor-pointer ${hoveredPropertyId === prop.id ? 'ring-2 ring-gray-900 border-transparent' : 'border-gray-100'}`}
-                                            onMouseEnter={() => setHoveredPropertyId(prop.id)}
-                                            onMouseLeave={() => setHoveredPropertyId(null)}
-                                        >
-                                            <Link href={`/properties/${prop.slug}`} className="block relative">
-                                                <img src={prop.images?.[0]?.image_path || '/images/hero.png'} alt={prop.title} className="w-full h-24 object-cover" />
-                                                <div className="p-3">
-                                                    <div className="text-gray-900 font-bold text-sm mb-0.5">${Number(prop.price).toLocaleString()}</div>
-                                                    <div className="font-medium text-xs text-gray-800 truncate mb-1">{prop.title}</div>
-                                                    <div className="flex items-center gap-2 text-gray-500 text-[10px]">
-                                                        <span>{prop.bedrooms} {prop.bedrooms === 1 ? 'Bed' : 'Beds'}</span>
-                                                        <span>{prop.bathrooms} {prop.bathrooms === 1 ? 'Bath' : 'Baths'}</span>
+                                    {/* Carousel Navigation */}
+                                    {properties.data.filter(p => p.latitude && p.longitude).length > 2 && (
+                                        <>
+                                            <button 
+                                                onClick={() => { if(carouselRef.current) carouselRef.current.scrollBy({left: -220, behavior: 'smooth'}) }} 
+                                                className="absolute bottom-24 left-2 z-[1001] bg-white/95 p-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:bg-white hover:scale-110 transition-all text-gray-700 hidden sm:flex"
+                                            >
+                                                <ChevronLeft className="w-5 h-5" />
+                                            </button>
+                                            <button 
+                                                onClick={() => { if(carouselRef.current) carouselRef.current.scrollBy({left: 220, behavior: 'smooth'}) }} 
+                                                className="absolute bottom-24 right-2 z-[1001] bg-white/95 p-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:bg-white hover:scale-110 transition-all text-gray-700 hidden sm:flex"
+                                            >
+                                                <ChevronRight className="w-5 h-5" />
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {/* Bottom Carousel */}
+                                    <div ref={carouselRef} className="absolute bottom-4 left-0 w-full overflow-x-auto px-4 pb-4 pt-2 flex gap-3 snap-x snap-mandatory z-[1000] scrollbar-hide scroll-smooth">
+                                        {properties.data.filter(p => p.latitude && p.longitude).map(prop => (
+                                            <div
+                                                key={prop.id}
+                                                className={`snap-center shrink-0 w-52 bg-white rounded-xl shadow-md border overflow-hidden transition-all duration-300 cursor-pointer ${hoveredPropertyId === prop.id ? 'ring-2 ring-gray-900 border-transparent shadow-xl -translate-y-1' : 'border-gray-100 hover:-translate-y-0.5 hover:shadow-lg'}`}
+                                                onMouseEnter={() => setHoveredPropertyId(prop.id)}
+                                                onMouseLeave={() => setHoveredPropertyId(null)}
+                                            >
+                                                <Link href={`/properties/${prop.slug}`} className="block relative group/card">
+                                                    <div className="relative h-20 overflow-hidden">
+                                                        <img src={prop.images?.[0]?.image_path || '/images/hero.png'} alt={prop.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
                                                     </div>
-                                                </div>
-                                            </Link>
-                                        </div>
-                                    ))}
+                                                    <div className="p-3">
+                                                        <div className="text-gray-900 font-bold text-sm mb-0.5 tracking-tight">${Number(prop.price).toLocaleString()}</div>
+                                                        <div className="font-medium text-[11px] text-gray-500 truncate mb-1.5">{prop.title}</div>
+                                                        <div className="flex items-center gap-2 text-gray-900 text-[10px] font-semibold">
+                                                            <span>{prop.bedrooms} <span className="text-gray-400 font-normal">Beds</span></span>
+                                                            <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                                                            <span>{prop.bathrooms} <span className="text-gray-400 font-normal">Baths</span></span>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
+                            </motion.div>
+                        </div>
+                    )}
                 </AnimatePresence>,
                 document.body
             )}

@@ -36,41 +36,30 @@ export default function About() {
                         <h3 className="text-3xl font-medium text-gray-900">Curators of fine real estate.</h3>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {/* Executive 1 */}
-                        <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
-                            <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Arthur Vance" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                            </div>
-                            <h4 className="text-lg font-medium text-gray-900">Arthur Vance</h4>
-                            <p className="text-sm text-gray-500 font-light">Chief Executive Officer</p>
-                        </motion.div>
-                        
-                        {/* Executive 2 */}
-                        <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
-                            <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop" alt="Clara Hayes" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                            </div>
-                            <h4 className="text-lg font-medium text-gray-900">Clara Hayes</h4>
-                            <p className="text-sm text-gray-500 font-light">Chief Operating Officer</p>
-                        </motion.div>
+                    <div className="flex justify-center">
+                        {/* John Viray - CEO */}
+                        <motion.div className="group w-72" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
+                            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100 shadow-lg transition-all duration-500 group-hover:shadow-2xl group-hover:scale-[1.02]">
+                                <img src="/MeBlack2.png" alt="John Viray" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />
 
-                        {/* Executive 3 */}
-                        <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
-                            <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop" alt="Julian Thorne" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                            </div>
-                            <h4 className="text-lg font-medium text-gray-900">Julian Thorne</h4>
-                            <p className="text-sm text-gray-500 font-light">Chief Architect</p>
-                        </motion.div>
+                                {/* Permanent gradient fade at bottom */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
 
-                        {/* Executive 4 */}
-                        <motion.div className="group" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.4 }}>
-                            <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-gray-100">
-                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop" alt="Isabella Rossi" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                {/* Hover glass overlay */}
+                                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-center items-center p-6 text-center z-10">
+                                    <div className="transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                                        <p className="text-white/60 text-xs uppercase tracking-widest mb-2">Chief Executive Officer</p>
+                                        <h4 className="text-2xl font-medium text-white mb-6">John Viray</h4>
+                                        <div className="w-10 h-px bg-white/40 mx-auto"></div>
+                                    </div>
+                                </div>
+
+                                {/* Default bottom info */}
+                                <div className="absolute bottom-0 left-0 w-full p-5 group-hover:opacity-0 group-hover:translate-y-3 transition-all duration-400 z-20">
+                                    <h4 className="text-lg font-medium text-white">John Viray</h4>
+                                    <p className="text-sm text-gray-300 font-light">Chief Executive Officer</p>
+                                </div>
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">Isabella Rossi</h4>
-                            <p className="text-sm text-gray-500 font-light">Head of Global Strategy</p>
                         </motion.div>
                     </div>
                 </section>

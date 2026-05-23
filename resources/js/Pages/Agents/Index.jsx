@@ -22,9 +22,9 @@ export default function AgentsIndex({ agents }) {
             {/* Immersive Hero Section */}
             <div className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-black">
                 <div className="absolute inset-0 z-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop" 
-                        alt="Elevate Luxury Estate" 
+                    <img
+                        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop"
+                        alt="Elevate Luxury Estate"
                         className="w-full h-full object-cover scale-105 opacity-50"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"></div>
@@ -44,25 +44,25 @@ export default function AgentsIndex({ agents }) {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 -mt-20 relative z-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                     {agents.map((agent, i) => (
-                        <motion.div 
+                        <motion.div
                             key={agent.id}
-                            initial={{ opacity: 0, y: 30 }} 
-                            whileInView={{ opacity: 1, y: 0 }} 
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-100px" }}
                             transition={{ delay: i * 0.1, duration: 0.6 }}
                         >
                             <Link href={`/agents/${agent.id}`} className="group block h-full">
                                 <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-gray-100 shadow-xl">
                                     {/* Agent Image */}
-                                    <img 
-                                        src={agent.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.user?.name)}&size=400&background=random`} 
-                                        alt={agent.user?.name} 
+                                    <img
+                                        src={agent.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.user?.name)}&size=400&background=random`}
+                                        alt={agent.user?.name}
                                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                     />
-                                    
+
                                     {/* Permanent Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                                    
+
                                     {/* Hover Glass Panel Overlay */}
                                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex flex-col justify-center items-center p-6 text-center">
                                         <div className="transform translate-y-8 group-hover:translate-y-0 transition-all duration-500 delay-75">
@@ -72,7 +72,7 @@ export default function AgentsIndex({ agents }) {
                                                     <span className="text-sm text-gray-300">{agent.average_rating} ({agent.reviews?.length || 0} Reviews)</span>
                                                 </div>
                                             )}
-                                            
+
                                             <div className="flex gap-4 justify-center mb-8">
                                                 <div className="text-center">
                                                     <div className="text-2xl font-medium text-white">{agent.properties_count}</div>

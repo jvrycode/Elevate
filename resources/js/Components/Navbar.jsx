@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, LayoutDashboard, Heart, Settings, ChevronDown } from 'lucide-react';
+import { LogOut, LayoutDashboard, Heart, Settings, ChevronDown, Menu, X } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 
 export default function Navbar({ forceDark = false }) {
@@ -9,6 +9,7 @@ export default function Navbar({ forceDark = false }) {
     const isHome = url === '/';
     const user = props.auth?.user;
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -123,13 +124,48 @@ export default function Navbar({ forceDark = false }) {
                             <Link href="/login" className={`text-sm font-medium transition-colors hidden sm:block ${isDarkBackground ? 'text-white hover:text-gray-200' : 'text-gray-900 hover:text-gray-600'}`}>
                                 Sign In
                             </Link>
-                            <Link href="/register" className={`text-sm font-medium px-6 py-2.5 rounded-full transition-colors ${isDarkBackground ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}>
+                            <Link href="/register" className={`text-sm font-medium px-6 py-2.5 rounded-full transition-colors hidden sm:block ${isDarkBackground ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}>
                                 Get Started
                             </Link>
                         </div>
                     )}
+
+                    {/* Mobile Menu Toggle */}
+                    <button 
+                        className={`md:hidden ml-4 p-1 rounded-full transition-colors ${textColor}`}
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    >
+                        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
                 </div>
             </nav>
+
+            {/* Mobile Menu Dropdown */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-[110%] left-4 right-4 mt-2 bg-white/95 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50 md:hidden"
+                    >
+                        <div className="flex flex-col p-4 gap-2">
+                            <Link href="/properties" className="px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Residences</Link>
+                            <Link href="/agents" className="px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Agents</Link>
+                            <Link href="/about" className="px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>About</Link>
+                            <Link href="/contact" className="px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+                            
+                            {!user && (
+                                <div className="mt-2 pt-4 border-t border-gray-100 flex flex-col gap-2">
+                                    <Link href="/login" className="px-4 py-3 text-sm font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
+                                    <Link href="/register" className="px-4 py-3 text-sm font-medium text-center text-white bg-gray-900 hover:bg-gray-800 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
